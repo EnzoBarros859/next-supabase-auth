@@ -19,11 +19,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} min-h-screen flex flex-col bg-[#0F172A]`}>
+        <div className="flex flex-col min-h-screen">
           <Header />
-          <main className="grow">
+          <main className="flex-grow relative">
             {children}
           </main>
           <Footer />
+        </div>
       </body>
     </html>
   );

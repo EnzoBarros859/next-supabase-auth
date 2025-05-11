@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -11,12 +13,16 @@ export default function SignIn() {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const supabase = createClientComponentClient();
+  const router = useRouter();
 
   useEffect(() => {
     const checkUser = async () => {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (user && !userError) {
         setMessage('Successfully signed in!');
+        setTimeout(() => {
+          router.push('/profile');
+        }, 1000);
       }
     };
     checkUser();
@@ -41,6 +47,9 @@ export default function SignIn() {
 
       if (user) {
         setMessage('Successfully signed in!');
+        setTimeout(() => {
+          router.push('/profile');
+        }, 1000);
       }
     } catch (err: any) {
       setError(err.message || 'Error signing in. Please try again.');

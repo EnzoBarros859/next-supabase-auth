@@ -2,7 +2,9 @@ export const EVENTS = {
   PASSWORD_RECOVERY: 'PASSWORD_RECOVERY',
   SIGNED_OUT: 'SIGNED_OUT',
   USER_UPDATED: 'USER_UPDATED',
-};
+} as const;
+
+export type AuthEvent = typeof EVENTS[keyof typeof EVENTS];
 
 export const VIEWS = {
   SIGN_IN: 'sign_in',
@@ -10,4 +12,6 @@ export const VIEWS = {
   FORGOTTEN_PASSWORD: 'forgotten_password',
   MAGIC_LINK: 'magic_link',
   UPDATE_PASSWORD: 'update_password',
-};
+} as const;
+
+export type AuthView = typeof VIEWS[keyof typeof VIEWS]; 

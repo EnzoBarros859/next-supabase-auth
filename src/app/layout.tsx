@@ -1,5 +1,6 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { ReactNode } from 'react';
 
 import AuthProvider from 'src/components/AuthProvider';
 
@@ -8,7 +9,11 @@ import 'src/styles/globals.css';
 // do not cache this layout
 export const revalidate = 0;
 
-export default async function RootLayout({ children }) {
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+export default async function RootLayout({ children }: RootLayoutProps) {
   const supabase = createServerComponentClient({ cookies });
 
   const {
@@ -29,4 +34,4 @@ export default async function RootLayout({ children }) {
       </body>
     </html>
   );
-}
+} 

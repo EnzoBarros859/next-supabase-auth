@@ -1,22 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import cn from 'classnames';
 import { Field, Form, Formik } from 'formik';
 import { useRouter } from 'next/navigation';
 import * as Yup from 'yup';
 
+interface UpdatePasswordFormData {
+  password: string;
+}
+
 const UpdatePasswordSchema = Yup.object().shape({
   password: Yup.string().required('Required'),
 });
 
-const UpdatePassword = () => {
+const UpdatePassword: React.FC = () => {
   const supabase = createClientComponentClient();
   const router = useRouter();
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  async function updatePassword(formData) {
+  async function updatePassword(formData: UpdatePasswordFormData): Promise<void> {
     const { error } = await supabase.auth.updateUser({
       password: formData.password,
     });
@@ -62,4 +66,4 @@ const UpdatePassword = () => {
   );
 };
 
-export default UpdatePassword;
+export default UpdatePassword; 

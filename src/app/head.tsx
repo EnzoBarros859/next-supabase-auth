@@ -1,4 +1,6 @@
-export default function Head() {
+import React from 'react';
+
+export default function Head(): React.ReactElement {
   return (
     <>
       <title>Next.js with Supabase Auth</title>
@@ -6,4 +8,4 @@ export default function Head() {
       <meta name="viewport" content="width=device-width" />
     </>
   );
-}
+} 

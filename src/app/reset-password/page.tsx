@@ -1,10 +1,11 @@
+import React from 'react';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import SignIn from 'src/components/Auth/SignIn';
+import ResetPassword from '../../components/Auth/ResetPassword';
 
-export default async function SignInPage() {
+export default async function ResetPasswordPage(): Promise<React.ReactElement> {
   const supabase = createServerComponentClient({ cookies });
   const { data } = await supabase.auth.getSession();
 
@@ -12,5 +13,5 @@ export default async function SignInPage() {
     redirect('/');
   }
 
-  return <SignIn />;
-}
+  return <ResetPassword />;
+} 

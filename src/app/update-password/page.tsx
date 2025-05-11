@@ -1,10 +1,11 @@
+import React from 'react';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import UpdatePassword from 'src/components/Auth/UpdatePassword';
+import UpdatePassword from '../../components/Auth/UpdatePassword';
 
-export default async function UpdatePasswordPage() {
+export default async function UpdatePasswordPage(): Promise<React.ReactElement> {
   const supabase = createServerComponentClient({ cookies });
 
   const {
@@ -16,4 +17,4 @@ export default async function UpdatePasswordPage() {
   }
 
   return <UpdatePassword />;
-}
+} 

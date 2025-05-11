@@ -12,9 +12,11 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
 
+
   if (!user) {
     redirect('/sign-in');
   }
+  console.log(user);
 
   return (
     <div className="card">

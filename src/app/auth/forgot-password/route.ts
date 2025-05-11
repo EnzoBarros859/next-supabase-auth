@@ -25,7 +25,6 @@ export async function POST(request: Request) {
       new URL('/forgot-password?message=Check your email for the password reset link', request.url)
     );
   } catch (error) {
-    console.error('Error sending password reset email:', error);
     return NextResponse.json(
       { error: 'Error sending password reset email' },
       { status: 500 }

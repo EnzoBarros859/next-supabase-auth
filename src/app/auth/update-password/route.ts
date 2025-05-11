@@ -48,14 +48,14 @@ export async function POST(request: Request) {
 
   try {
     const { error } = await supabase.auth.updateUser({
-      password: password,
+      password,
     });
 
     if (error) throw error;
 
     return NextResponse.redirect(new URL('/profile', request.url));
   } catch (error) {
-    console.error('Error updating password:', error);
+    
     return NextResponse.json(
       { error: 'Error updating password' },
       { status: 500 }

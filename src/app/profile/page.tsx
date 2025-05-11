@@ -4,17 +4,14 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
-import AdminDashboard from '../../components/AdminDashboard';
 import UserProfile from '../../components/UserProfile';
 
 export default async function ProfilePage() {
   const supabase = createServerComponentClient({ cookies });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const { data: { user }, error } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!user || error) {
     redirect('/sign-in');
   }
 
@@ -22,7 +19,7 @@ export default async function ProfilePage() {
   const { data: profile } = await supabase
     .from('profiles')
     .select('role')
-    .eq('id', session.user.id)
+    .eq('id', user.id)
     .single();
 
   return (
@@ -41,7 +38,7 @@ export default async function ProfilePage() {
                 <div className="flex justify-between items-center">
                   <div>
                     <h1 className="text-4xl font-bold text-white mb-2">Profile Dashboard</h1>
-                    <p className="text-gray-400">Welcome back, {session.user.email}</p>
+                    <p className="text-gray-400">Welcome back, {user.email}</p>
                   </div>
                   <Link
                     href="/update-password"
@@ -57,11 +54,9 @@ export default async function ProfilePage() {
             {/* Content section */}
             <div className="p-8">
               <div className="bg-[#0F172A] rounded-xl p-6">
-                {profile?.role === 'admin' ? (
-                  <AdminDashboard />
-                ) : (
-                  <UserProfile user={session.user} />
-                )}
+                
+                  <UserProfile user={user} />
+                
               </div>
             </div>
           </div>

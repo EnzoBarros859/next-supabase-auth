@@ -39,7 +39,6 @@ export default function UpdatePassword() {
       }, 2000);
     } catch (error) {
       setError('Error updating password. Please try again.');
-      console.error('Error updating password:', error);
     } finally {
       setIsLoading(false);
     }

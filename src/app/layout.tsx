@@ -1,34 +1,28 @@
 import React from 'react';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { ReactNode } from 'react';
-
+import { Inter } from 'next/font/google';
+import '../styles/globals.css';
 import AuthProvider from '../components/AuthProvider';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-import '../styles/globals.css';
+const inter = Inter({ subsets: ['latin'] });
 
-// do not cache this layout
-export const revalidate = 0;
+export const metadata = {
+  title: 'Next.js Supabase Auth',
+  description: 'Authentication system with Next.js and Supabase',
+};
 
-interface RootLayoutProps {
-  children: ReactNode;
-}
-
-export default async function RootLayout({ children }: RootLayoutProps) {
-  const supabase = createServerComponentClient({ cookies });
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col bg-[#0F172A]">
-        <AuthProvider accessToken={session?.access_token}>
+      <body className={`${inter.className} min-h-screen flex flex-col bg-[#0F172A]`}>
+        <AuthProvider>
           <Header />
-          <main className="flex-grow container mx-auto px-1 py-2">
+          <main className="grow">
             {children}
           </main>
           <Footer />

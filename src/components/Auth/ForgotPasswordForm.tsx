@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function ForgotPasswordForm() {
@@ -10,12 +9,10 @@ export default function ForgotPasswordForm() {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const supabase = createClientComponentClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setMessage('');
     setIsLoading(true);
 
@@ -29,7 +26,6 @@ export default function ForgotPasswordForm() {
       setMessage('Password reset instructions have been sent to your email.');
     } catch (error: any) {
       setError(error.message || 'Error sending reset instructions. Please try again.');
-      console.error('Error sending reset instructions:', error);
     } finally {
       setIsLoading(false);
     }

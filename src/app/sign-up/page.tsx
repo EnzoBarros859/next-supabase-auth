@@ -7,9 +7,9 @@ import SignUp from '../../components/Auth/SignUp';
 
 export default async function SignUpPage(): Promise<React.ReactElement> {
   const supabase = createServerComponentClient({ cookies });
-  const { data } = await supabase.auth.getSession();
+  const { data: { user }, error } = await supabase.auth.getUser();
 
-  if (data?.session) {
+  if (user && !error) {
     redirect('/');
   }
 

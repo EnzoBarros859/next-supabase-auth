@@ -22,8 +22,12 @@ const AuthProvider = ({ accessToken, children }: AuthProviderProps) => {
   useEffect(() => {
     const {
       data: { subscription: authListener },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.access_token !== accessToken) {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN') {
+        if (session?.access_token !== accessToken) {
+          router.refresh();
+        }
+      } else if (event === 'SIGNED_OUT') {
         router.refresh();
       }
     });

@@ -6,11 +6,9 @@ import ForgotPasswordForm from '../../components/Auth/ForgotPasswordForm';
 export default async function ForgotPasswordPage() {
   const supabase = createServerComponentClient({ cookies });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const { data: { user }, error } = await supabase.auth.getUser();
 
-  if (session) {
+  if (user && !error) {
     redirect('/profile');
   }
 

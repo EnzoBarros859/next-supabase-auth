@@ -7,11 +7,9 @@ import SignIn from '../../components/Auth/SignIn';
 export default async function SignInPage() {
   const supabase = createServerComponentClient({ cookies });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const { data: { user }, error } = await supabase.auth.getUser();
 
-  if (session) {
+  if (user && !error) {
     redirect('/profile');
   }
 

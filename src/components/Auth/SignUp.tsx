@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import Link from 'next/link';
 
@@ -12,6 +12,16 @@ export default function SignUp() {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const supabase = createClientComponentClient();
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (user && !userError) {
+        setMessage('You are already signed in!');
+      }
+    };
+    checkUser();
+  }, [supabase.auth]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +36,7 @@ export default function SignUp() {
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -34,103 +44,107 @@ export default function SignUp() {
         },
       });
 
-      if (error) throw error;
+      if (signUpError) throw signUpError;
 
-      setMessage('Check your email for the confirmation link.');
-    } catch (error: any) {
-      setError(error.message || 'Error signing up. Please try again.');
-      console.error('Error signing up:', error);
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+
+      if (user) {
+        setMessage('Check your email for the confirmation link.');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Error signing up. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="p-4 bg-red-900/50 text-red-200 rounded-lg">
-              {error}
-            </div>
-          )}
-          
-          {message && (
-            <div className="p-4 bg-green-900/50 text-green-200 rounded-lg">
-              {message}
-            </div>
-          )}
+    <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+      {error && (
+        <div className="p-4 bg-red-900/50 text-red-200 rounded-lg">
+          {error}
+        </div>
+      )}
+      
+      {message && (
+        <div className="p-4 bg-green-900/50 text-green-200 rounded-lg">
+          {message}
+        </div>
+      )}
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300">
-              Email Address
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full px-4 py-3 bg-[#0F172A] border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
-              placeholder="Enter your email"
-            />
-          </div>
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+          Email Address
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="mt-1 block w-full px-4 py-3 bg-[#0F172A] border border-gray-700 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
+          placeholder="Enter your email"
+        />
+      </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full px-4 py-3 bg-[#0F172A] border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
-              placeholder="Enter your password"
-            />
-          </div>
+      <div>
+        <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+          Password
+        </label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="mt-1 block w-full px-4 py-3 bg-[#0F172A] border border-gray-700 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
+          placeholder="Enter your password"
+        />
+      </div>
 
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
-              Confirm Password
-            </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="mt-1 block w-full px-4 py-3 bg-[#0F172A] border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
-              placeholder="Confirm your password"
-            />
-          </div>
+      <div>
+        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
+          Confirm Password
+        </label>
+        <input
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          required
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="mt-1 block w-full px-4 py-3 bg-[#0F172A] border border-gray-700 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
+          placeholder="Confirm your password"
+        />
+      </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="relative group w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 disabled:opacity-50"
-            >
-              <span className="relative z-10">
-                {isLoading ? 'Signing up...' : 'Sign Up'}
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </button>
-          </div>
+      <div>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="relative group w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 disabled:opacity-50"
+        >
+          <span className="relative z-10">
+            {isLoading ? 'Signing up...' : 'Sign Up'}
+          </span>
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300" />
+        </button>
+      </div>
 
-          <div className="text-center">
-            <p className="text-sm text-gray-400">
-              Already have an account?{' '}
-              <Link
-                href="/sign-in"
-                className="text-purple-400 hover:text-purple-300 transition-colors duration-200"
-              >
-                Sign in
-              </Link>
-            </p>
-          </div>
-        </form>
+      <div className="text-center">
+        <p className="text-sm text-gray-400">
+          Already have an account?{' '}
+          <Link
+            href="/sign-in"
+            className="text-purple-400 hover:text-purple-300 transition-colors duration-200"
+          >
+            Sign in
+          </Link>
+        </p>
+      </div>
+    </form>
   );
 } 

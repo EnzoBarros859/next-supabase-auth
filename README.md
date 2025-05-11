@@ -2,6 +2,10 @@
 
 A modern authentication system built with Next.js 14 and Supabase, featuring a beautiful dark theme UI and secure authentication flows.
 
+![image](https://github.com/user-attachments/assets/a548d218-d552-4b28-8a30-a98cff1c6111)
+
+
+
 ## Features
 
 - 🔐 Secure Authentication with Supabase

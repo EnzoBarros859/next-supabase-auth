@@ -1,8 +1,18 @@
 import React from 'react';
 import Link from 'next/link';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export default async function HomePage() {
+  const supabase = createServerComponentClient({ cookies });
+  const { data: { user }, error } = await supabase.auth.getUser();
 
+  if (user && !error) {
+    redirect('/profile');
+  }
+
+  
   return (
     <div className="min-h-screen bg-[#0F172A] flex items-center justify-center sm:px-6 lg:px-8">
       <div className="relative">
@@ -41,6 +51,7 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Inter } from 'next/font/google';
 import '../styles/globals.css';
-import AuthProvider from '../components/AuthProvider';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -20,13 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} min-h-screen flex flex-col bg-[#0F172A]`}>
-        <AuthProvider>
           <Header />
           <main className="grow">
             {children}
           </main>
           <Footer />
-        </AuthProvider>
       </body>
     </html>
   );

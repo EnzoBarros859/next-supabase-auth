@@ -15,10 +15,10 @@ export default function ForgotPasswordForm() {
     e.preventDefault();
     setMessage('');
     setIsLoading(true);
-
     try {
+      console.log('redirectTo:', `${process.env.NEXT_PUBLIC_SITE_URL}/auth/update-password`);
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/profile`,
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/update-password`,
       });
 
       if (error) throw error;

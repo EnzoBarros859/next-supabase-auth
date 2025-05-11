@@ -5,13 +5,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
 export default async function HomePage() {
-  const supabase = createServerComponentClient({ cookies });
 
-  const { data: { user }, error } = await supabase.auth.getUser();
-
-  if (user && !error) {
-    redirect('/profile');
-  }
 
   return (
     <div className="min-h-screen bg-[#0F172A]">

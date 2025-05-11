@@ -4,13 +4,20 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const requestUrl = new URL(request.url);
+  console.log('update-password-requestUrl:', requestUrl);
   const code = requestUrl.searchParams.get('code');
-
+  console.log('update-password-code:', code);
   if (code) {
     const supabase = createRouteHandlerClient({ cookies });
     await supabase.auth.exchangeCodeForSession(code);
 
-    return NextResponse.redirect(`${requestUrl.origin}/profile`);
+
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (user && !error) {
+      return NextResponse.redirect(`${requestUrl.origin}/update-password`);
+    } else {
+      return NextResponse.redirect(`${requestUrl.origin}/sign-in`);
+    }
   }
 
   // eslint-disable-next-line no-console

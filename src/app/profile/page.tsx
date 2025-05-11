@@ -15,13 +15,6 @@ export default async function ProfilePage() {
     redirect('/sign-in');
   }
 
-  // Get user role from the database
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
   return (
     <div className="min-h-screen bg-[#0F172A] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">

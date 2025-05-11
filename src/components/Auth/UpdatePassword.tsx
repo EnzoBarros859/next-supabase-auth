@@ -36,9 +36,9 @@ export default function UpdatePassword() {
       setMessage('Password updated successfully!');
       setTimeout(() => {
         router.push('/profile');
-      }, 2000);
-    } catch (error) {
-      setError('Error updating password. Please try again.');
+      }, 1000);
+    } catch (error: any) {
+      setError(error.message || 'Error updating password. Please try again.');
     } finally {
       setIsLoading(false);
     }

@@ -25,10 +25,10 @@ const AuthProvider = ({ accessToken, children }: AuthProviderProps) => {
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
         if (session?.access_token !== accessToken) {
-          router.refresh();
+          router.push("/");
         }
       } else if (event === 'SIGNED_OUT') {
-        router.refresh();
+        router.push("/");
       }
     });
 

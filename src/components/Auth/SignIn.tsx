@@ -1,89 +1,103 @@
 'use client';
 
-import React, { useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import cn from 'classnames';
-import { Field, Form, Formik } from 'formik';
+import React from 'react';
 import Link from 'next/link';
-import * as Yup from 'yup';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useRouter } from 'next/navigation';
 
-interface SignInFormData {
-  email: string;
-  password: string;
-}
-
-const SignInSchema = Yup.object().shape({
-  email: Yup.string().email('Invalid email').required('Required'),
-  password: Yup.string().required('Required'),
-});
-
-const SignIn: React.FC = () => {
+export default function SignIn() {
   const supabase = createClientComponentClient();
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const router = useRouter();
 
-  async function signIn(formData: SignInFormData): Promise<void> {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
     const { error } = await supabase.auth.signInWithPassword({
-      email: formData.email,
-      password: formData.password,
+      email,
+      password,
     });
 
     if (error) {
-      setErrorMsg(error.message);
+      router.push('/sign-in?error=Invalid email or password');
+    } else {
+      router.push('/profile');
+      router.refresh();
     }
-  }
+  };
 
   return (
-    <div className="card">
-      <h2 className="w-full text-center">Sign In</h2>
-      <Formik
-        initialValues={{
-          email: '',
-          password: '',
-        }}
-        validationSchema={SignInSchema}
-        onSubmit={signIn}
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+          Email Address
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          className="mt-1 block w-full px-4 py-3 bg-[#0F172A] border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
+          placeholder="Enter your email"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+          Password
+        </label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          className="mt-1 block w-full px-4 py-3 bg-[#0F172A] border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
+          placeholder="Enter your password"
+        />
+      </div>
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <input
+            id="remember"
+            name="remember"
+            type="checkbox"
+            className="h-4 w-4 text-purple-500 focus:ring-purple-500 border-gray-700 rounded bg-[#0F172A]"
+          />
+          <label htmlFor="remember" className="ml-2 block text-sm text-gray-300">
+            Remember me
+          </label>
+        </div>
+
+        <Link
+          href="/forgot-password"
+          className="text-sm text-purple-400 hover:text-purple-300 transition-colors duration-200"
+        >
+          Forgot password?
+        </Link>
+      </div>
+
+      <button
+        type="submit"
+        className="relative group w-full px-4 py-3 rounded-lg text-sm font-medium text-white"
       >
-        {({ errors, touched }) => (
-          <Form className="column w-full">
-            <label htmlFor="email">Email</label>
-            <Field
-              className={cn('input', errors.email && touched.email && 'bg-red-50')}
-              id="email"
-              name="email"
-              placeholder="jane@acme.com"
-              type="email"
-            />
-            {errors.email && touched.email ? (
-              <div className="text-red-600">{errors.email}</div>
-            ) : null}
+        <span className="relative z-10">Sign In</span>
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+      </button>
 
-            <label htmlFor="email">Password</label>
-            <Field
-              className={cn('input', errors.password && touched.password && 'bg-red-50')}
-              id="password"
-              name="password"
-              type="password"
-            />
-            {errors.password && touched.password ? (
-              <div className="text-red-600">{errors.password}</div>
-            ) : null}
-
-            <Link href="/reset-password" className="link w-full">
-              Forgot your password?
-            </Link>
-
-            <button className="button-inverse w-full" type="submit">
-              Submit
-            </button>
-          </Form>
-        )}
-      </Formik>
-      {errorMsg && <div className="text-red-600">{errorMsg}</div>}
-      <Link href="/sign-up" className="link w-full">
-        Don&apos;t have an account? Sign Up.
-      </Link>
-    </div>
+      <div className="text-center">
+        <p className="text-sm text-gray-400">
+          Don't have an account?{' '}
+          <Link
+            href="/sign-up"
+            className="text-purple-400 hover:text-purple-300 transition-colors duration-200"
+          >
+            Sign up
+          </Link>
+        </p>
+      </div>
+    </form>
   );
-};
-
-export default SignIn; 
+} 

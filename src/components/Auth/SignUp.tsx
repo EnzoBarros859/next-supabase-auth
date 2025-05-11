@@ -1,90 +1,106 @@
 'use client';
 
-import React, { useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import cn from 'classnames';
-import { Field, Form, Formik } from 'formik';
+import React from 'react';
 import Link from 'next/link';
-import * as Yup from 'yup';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useRouter } from 'next/navigation';
 
-interface SignUpFormData {
-  email: string;
-  password: string;
-}
-
-const SignUpSchema = Yup.object().shape({
-  email: Yup.string().email('Invalid email').required('Required'),
-  password: Yup.string().required('Required'),
-});
-
-const SignUp: React.FC = () => {
+export default function SignUp() {
   const supabase = createClientComponentClient();
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const router = useRouter();
 
-  async function signUp(formData: SignUpFormData): Promise<void> {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const confirmPassword = formData.get('confirmPassword') as string;
+
+    if (password !== confirmPassword) {
+      router.push('/sign-up?error=Passwords do not match');
+      return;
+    }
+
     const { error } = await supabase.auth.signUp({
-      email: formData.email,
-      password: formData.password,
-      // redirectTo: `${window.location.origin}/auth/callback`,
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
 
     if (error) {
-      setErrorMsg(error.message);
+      router.push('/sign-up?error=' + error.message);
     } else {
-      setSuccessMsg('Success! Please check your email for further instructions.');
+      router.push('/sign-up?message=Check your email to confirm your account');
     }
-  }
+  };
 
   return (
-    <div className="card">
-      <h2 className="w-full text-center">Create Account</h2>
-      <Formik
-        initialValues={{
-          email: '',
-          password: '',
-        }}
-        validationSchema={SignUpSchema}
-        onSubmit={signUp}
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+          Email Address
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          className="mt-1 block w-full px-4 py-3 bg-[#0F172A] border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
+          placeholder="Enter your email"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+          Password
+        </label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          minLength={6}
+          className="mt-1 block w-full px-4 py-3 bg-[#0F172A] border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
+          placeholder="Create a password"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
+          Confirm Password
+        </label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          required
+          minLength={6}
+          className="mt-1 block w-full px-4 py-3 bg-[#0F172A] border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
+          placeholder="Confirm your password"
+        />
+      </div>
+
+      <button
+        type="submit"
+        className="relative group w-full px-4 py-3 rounded-lg text-sm font-medium text-white"
       >
-        {({ errors, touched }) => (
-          <Form className="column w-full">
-            <label htmlFor="email">Email</label>
-            <Field
-              className={cn('input', errors.email && 'bg-red-50')}
-              id="email"
-              name="email"
-              placeholder="jane@acme.com"
-              type="email"
-            />
-            {errors.email && touched.email ? (
-              <div className="text-red-600">{errors.email}</div>
-            ) : null}
+        <span className="relative z-10">Create Account</span>
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+      </button>
 
-            <label htmlFor="email">Password</label>
-            <Field
-              className={cn('input', errors.password && touched.password && 'bg-red-50')}
-              id="password"
-              name="password"
-              type="password"
-            />
-            {errors.password && touched.password ? (
-              <div className="text-red-600">{errors.password}</div>
-            ) : null}
-
-            <button className="button-inverse w-full" type="submit">
-              Submit
-            </button>
-          </Form>
-        )}
-      </Formik>
-      {errorMsg && <div className="text-red-600">{errorMsg}</div>}
-      {successMsg && <div className="text-black">{successMsg}</div>}
-      <Link href="/sign-in" className="link w-full">
-        Already have an account? Sign In.
-      </Link>
-    </div>
+      <div className="text-center">
+        <p className="text-sm text-gray-400">
+          Already have an account?{' '}
+          <Link
+            href="/sign-in"
+            className="text-purple-400 hover:text-purple-300 transition-colors duration-200"
+          >
+            Sign in
+          </Link>
+        </p>
+      </div>
+    </form>
   );
-};
-
-export default SignUp; 
+} 

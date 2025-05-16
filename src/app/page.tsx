@@ -29,7 +29,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 sm:text-6xl">
-              Welcome to Next.js Auth
+              Welcome to Next.js and Supabase
             </h1>
             <p className="mt-6 text-lg leading-8 text-gray-400">
               A modern authentication system built with Next.js and Supabase. Secure, fast, and easy to use.
